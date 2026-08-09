@@ -1,0 +1,23 @@
+name: GreenCICD Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Simulate CI work
+        run: |
+          echo "GreenCICD test pipeline started"
+          sleep 20
+          echo "GreenCICD test pipeline completed"
+
+      - name: Finish
+        run: echo "Pipeline finished successfully"
