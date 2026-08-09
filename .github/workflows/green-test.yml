@@ -13,11 +13,43 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Start collecting CPU and memory usage
+      - name: Start telemetry collection
+        run: |
+          (
+            while true
+            do
+              CPU=$(top -bn1 | grep "Cpu(s)" | awk '{print 100 - $8}')
+              MEMORY=$(free | awk '/Mem:/ {printf "%.2f", $3/$2 * 100}')
+              
+              echo "$CPU $MEMORY" >> telemetry.log
+
+              sleep 1
+            done
+          ) &
+
+          echo $! > telemetry.pid
+
+      # Your normal CI work
       - name: Simulate CI work
         run: |
           echo "GreenCICD test pipeline started"
           sleep 20
           echo "GreenCICD test pipeline completed"
 
-      - name: Finish
-        run: echo "Pipeline finished successfully"
+      # Stop telemetry collection and calculate averages
+      - name: Calculate telemetry
+        run: |
+          kill $(cat telemetry.pid) || true
+
+          echo "Telemetry samples:"
+          cat telemetry.log
+
+          AVG_CPU=$(awk '{sum += $1} END {if (NR > 0) print sum/NR; else print 0}' telemetry.log)
+          AVG_MEMORY=$(awk '{sum += $2} END {if (NR > 0) print sum/NR; else print 0}' telemetry.log)
+
+          echo "Average CPU: $AVG_CPU%"
+          echo "Average Memory: $AVG_MEMORY%"
+
+          echo "AVG_CPU=$AVG_CPU" >> $GITHUB_ENV
+          echo "AVG_MEMORY=$AVG_MEMORY" >> $GITHUB_ENV
