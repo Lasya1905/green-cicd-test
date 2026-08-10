@@ -31,6 +31,7 @@ jobs:
 
           echo $! > telemetry.pid
 
+
       # Your normal CI work
       - name: Simulate CI work
         run: |
