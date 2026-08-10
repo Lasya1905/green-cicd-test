@@ -40,7 +40,8 @@ jobs:
       # Stop telemetry collection and calculate averages
       - name: Calculate telemetry
         run: |
-          kill $(cat telemetry.pid) || true
+          kill $(cat telemetry.pid) 
+          || true
 
           echo "Telemetry samples:"
           cat telemetry.log
@@ -53,3 +54,18 @@ jobs:
 
           echo "AVG_CPU=$AVG_CPU" >> $GITHUB_ENV
           echo "AVG_MEMORY=$AVG_MEMORY" >> $GITHUB_ENV
+          
+      - name: Send telemetry to GreenCICD
+        run: |
+          curl -X POST \
+            "https://nonfermentable-bioclimatological-monroe.ngrok-free.dev/telemetry/github" \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "repo_full_name": "${{ github.repository }}",
+              "cpu_usage": '"$AVG_CPU"',
+              "memory_usage": '"$AVG_MEMORY"',
+              "duration_minutes": 0
+            }'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
