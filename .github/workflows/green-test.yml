@@ -49,8 +49,8 @@ jobs:
           AVG_CPU=$(awk '{sum += $1} END {if (NR > 0) print sum/NR; else print 0}' telemetry.log)
           AVG_MEMORY=$(awk '{sum += $2} END {if (NR > 0) print sum/NR; else print 0}' telemetry.log)
 
-          echo "Average CPU: $AVG_CPU%"
-          echo "Average Memory: $AVG_MEMORY%"
+          echo "Average CPU : $AVG_CPU%"
+          echo "Average Memory : $AVG_MEMORY%"
 
           echo "AVG_CPU=$AVG_CPU" >> $GITHUB_ENV
           echo "AVG_MEMORY=$AVG_MEMORY" >> $GITHUB_ENV
