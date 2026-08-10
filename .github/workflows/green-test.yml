@@ -63,6 +63,7 @@ jobs:
             -H "Content-Type: application/json" \
             -d '{
               "repo_full_name": "${{ github.repository }}",
+              "github_run_id": "${{ github.run_id }}",
               "cpu_usage": '"$AVG_CPU"',
               "memory_usage": '"$AVG_MEMORY"',
               "duration_minutes": 0
