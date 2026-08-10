@@ -40,8 +40,8 @@ jobs:
       # Stop telemetry collection and calculate averages
       - name: Calculate telemetry
         run: |
-          kill $(cat telemetry.pid) 
-          || true
+          PID=$(cat telemetry.pid)
+          kill "$PID"
 
           echo "Telemetry samples:"
           cat telemetry.log
